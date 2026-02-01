@@ -315,25 +315,38 @@ button:hover{
     font-family: 'VT323', monospace;
 }
 
-.fake-input{
+.fake-input {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: env(safe-area-inset-bottom);
+
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 18px;
-  margin-top: 10px;
+
+  padding: 14px 16px;
+  background: rgba(40, 0, 0, 0.92);
+
+  z-index: 999;
+  box-sizing: border-box;
 }
 
+
 /* input kiểu terminal */
-#nameInput{
-  flex: 1;
+#nameInput {
+  flex: 1;                 /* ⭐ CỰC QUAN TRỌNG */
+  min-width: 0;
+
   background: transparent;
   border: none;
   outline: none;
-  color: #ffcc66;
-  font-size: 18px;
-  font-family: "Courier New", monospace;
-  caret-color: #ffcc66;
+
+  color: #d4a100;
+  font-family: inherit;
+  font-size: 16px;         /* chống iOS zoom */
 }
+
 
 /* placeholder mờ */
 #nameInput::placeholder{
