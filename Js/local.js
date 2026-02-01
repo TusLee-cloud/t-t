@@ -36,6 +36,11 @@ function getSavedName(){
 ===================================================== */
 document.addEventListener("DOMContentLoaded", () => {
 
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
+  window.scrollTo(0, 0);
+
   const overlay   = document.getElementById("overlay");
   const logArea   = document.getElementById("logArea");
   const inputLine = document.getElementById("inputLine");
@@ -45,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!overlay || !logArea || !inputLine || !nameInput || !nameForm) return;
 
-  /* ================= LOG SYSTEM ================= */
   const logs = [
     "[SYSTEM] KHỞI ĐỘNG GIAO DIỆN TẾT 2026...",
     "[SECURITY] KIỂM TRA LÌ XÌ...",
@@ -54,71 +58,66 @@ document.addEventListener("DOMContentLoaded", () => {
     "[INPUT] XIN PHÉP CHO BIẾT QUÝ DANH..."
   ];
 
-  let logIndex   = 0;
-  let charIndex  = 0;
+  let logIndex = 0;
+  let charIndex = 0;
   let inputShown = false;
 
-  function showInputOnce() {
-    if (inputShown) return;
+  function showInputOnce(){
+    if(inputShown) return;
     inputShown = true;
 
     inputLine.classList.remove("hidden");
     hint?.classList.remove("hidden");
 
-    // 📱 mobile: focus để bật bàn phím
-    setTimeout(() => {
-      nameInput.focus();
-    }, 300);
+    setTimeout(() => nameInput.focus(), 300);
   }
 
-  function typeLog() {
-    // ✅ chỉ hiện input khi CHẠY HẾT logs
-    if (logIndex >= logs.length) {
+  nameInput.addEventListener("focus", () => {
+    setTimeout(() => window.scrollTo(0, 0), 50);
+    setTimeout(() => window.scrollTo(0, 0), 300);
+  });
+
+  function typeLog(){
+    if(logIndex >= logs.length){
       showInputOnce();
       return;
     }
 
-    if (!logArea.children[logIndex]) {
+    if(!logArea.children[logIndex]){
       const div = document.createElement("div");
       div.className = "line";
       logArea.appendChild(div);
     }
 
-    const line   = logs[logIndex];
     const lineEl = logArea.children[logIndex];
-
-    lineEl.textContent += line.charAt(charIndex);
+    lineEl.textContent += logs[logIndex][charIndex];
     charIndex++;
 
-    if (charIndex < line.length) {
+    if(charIndex < logs[logIndex].length){
       setTimeout(typeLog, 40);
-    } else {
+    }else{
       charIndex = 0;
       logIndex++;
       setTimeout(typeLog, 500);
     }
   }
 
-  /* ================= ĐÃ CÓ TÊN ================= */
-  const savedName =
-    typeof getSavedName === "function" ? getSavedName() : null;
+  const savedName = typeof getSavedName === "function" ? getSavedName() : null;
 
-  if (savedName) {
+  if(savedName){
     overlay.classList.add("exit");
     setTimeout(() => overlay.remove(), 300);
     window.dispatchEvent(new Event("username-ready"));
     return;
   }
 
-  // 🔥 bắt đầu hiệu ứng terminal
   typeLog();
 
-  /* ================= SUBMIT (CHUẨN IOS) ================= */
-  nameForm.addEventListener("submit", (e) => {
+  nameForm.addEventListener("submit", e => {
     e.preventDefault();
 
     const name = nameInput.value.trim();
-    if (!name) return;
+    if(!name) return;
 
     localStorage.setItem(NAME_KEY, name);
     localStorage.setItem(TIME_KEY, Date.now());
@@ -130,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
 
 
 /* =====================================================
