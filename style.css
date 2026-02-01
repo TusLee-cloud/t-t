@@ -733,3 +733,15 @@ button:hover{
 #nameInput{
   -webkit-appearance: none;
 }
+
+#nameForm{
+  margin: -32px 0 0 -5rem;
+}
+
+#logArea{
+  margin: 3rem;
+}
+
+ #hint{
+  margin: -3rem 0 0 3rem;
+ }

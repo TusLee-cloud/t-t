@@ -20,10 +20,9 @@
   <!-- LEFT -->
   <div class="left">
     <div class="slider">
-        <div class="slide active" style="background-image:url('https://i.pinimg.com/1200x/b6/e4/77/b6e477d99928a7542827fb76106ec95f.jpg')"></div>
-        <div class="slide" style="background-image:url('https://i.pinimg.com/1200x/03/10/94/0310943e625a3c34bc1630d4e74df09d.jpg')"></div>
-        <div class="slide" style="background-image:url('https://i.pinimg.com/1200x/b0/39/8c/b0398cef855c5ba0a4af0ef42d508d73.jpg')"></div>
-       <div class="slide" style="background-image:url('https://i.pinimg.com/736x/c4/a2/d3/c4a2d3e9d98052e6e5e13f652a48f21a.jpg')"></div>
+        <div class="slide active" style="background-image:url('https://i.pinimg.com/1200x/4c/3f/f4/4c3ff4bb34c6c3ea9672dcfaf34ee162.jpg')"></div>
+        <div class="slide" style="background-image:url('https://i.pinimg.com/736x/1a/16/3d/1a163d814542f5af88b32a20ea56c729.jpg')"></div>
+        <div class="slide" style="background-image:url('https://i.pinimg.com/736x/8a/93/3e/8a933ed7e993ed47a447a72d6af00952.jpg')"></div>
     </div>
 
     
@@ -108,15 +107,21 @@
 
        <div class="line fake-input hidden" id="inputLine">
             &gt; NHẬP TÊN:
-            <input
+
+            <form id="nameForm" autocomplete="off">
+                <input
                 type="text"
                 id="nameInput"
-                placeholder="Nhập tên tại đây"
+                placeholder="...."
                 autocomplete="off"
                 autocapitalize="words"
                 inputmode="text"
-            >
+                enterkeyhint="done"
+                required
+                >
+            </form>
         </div>
+
 
         <div class="hint hidden" id="hint">↵ ENTER ĐỂ BƯỚC VÀO NĂM MỚI</div>
     </div>
