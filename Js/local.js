@@ -36,20 +36,15 @@ function getSavedName(){
 ===================================================== */
 document.addEventListener("DOMContentLoaded", () => {
 
-  if ('scrollRestoration' in history) {
-    history.scrollRestoration = 'manual';
-  }
-  window.scrollTo(0, 0);
-
   const overlay   = document.getElementById("overlay");
   const logArea   = document.getElementById("logArea");
   const inputLine = document.getElementById("inputLine");
   const nameInput = document.getElementById("nameInput");
-  const nameForm  = document.getElementById("nameForm");
   const hint      = document.getElementById("hint");
 
-  if (!overlay || !logArea || !inputLine || !nameInput || !nameForm) return;
+  if (!overlay || !logArea || !inputLine || !nameInput) return;
 
+  /* ================= LOG SYSTEM ================= */
   const logs = [
     "[SYSTEM] KHỞI ĐỘNG GIAO DIỆN TẾT 2026...",
     "[SECURITY] KIỂM TRA LÌ XÌ...",
@@ -58,66 +53,71 @@ document.addEventListener("DOMContentLoaded", () => {
     "[INPUT] XIN PHÉP CHO BIẾT QUÝ DANH..."
   ];
 
-  let logIndex = 0;
-  let charIndex = 0;
-  let inputShown = false;
+  let logIndex   = 0;
+  let charIndex  = 0;
+  let inputShown = false; // 🔒 khóa không cho hiện sớm
 
   function showInputOnce(){
-    if(inputShown) return;
+    if (inputShown) return;
     inputShown = true;
 
     inputLine.classList.remove("hidden");
     hint?.classList.remove("hidden");
 
-    setTimeout(() => nameInput.focus(), 300);
+    // mobile: focus sau 1 nhịp nhỏ
+    setTimeout(() => {
+      nameInput.focus();
+    }, 300);
   }
 
-  nameInput.addEventListener("focus", () => {
-    setTimeout(() => window.scrollTo(0, 0), 50);
-    setTimeout(() => window.scrollTo(0, 0), 300);
-  });
-
   function typeLog(){
-    if(logIndex >= logs.length){
+    // ✅ chỉ khi CHẠY HẾT TOÀN BỘ logs
+    if (logIndex === logs.length) {
       showInputOnce();
       return;
     }
 
-    if(!logArea.children[logIndex]){
+    if (!logArea.children[logIndex]) {
       const div = document.createElement("div");
       div.className = "line";
       logArea.appendChild(div);
     }
 
+    const line   = logs[logIndex];
     const lineEl = logArea.children[logIndex];
-    lineEl.textContent += logs[logIndex][charIndex];
+
+    lineEl.textContent += line.charAt(charIndex);
     charIndex++;
 
-    if(charIndex < logs[logIndex].length){
+    if (charIndex < line.length) {
       setTimeout(typeLog, 40);
-    }else{
+    } else {
+      // xong 1 dòng
       charIndex = 0;
       logIndex++;
       setTimeout(typeLog, 500);
     }
   }
 
+  /* ================= ĐÃ CÓ TÊN TRƯỚC ĐÓ ================= */
   const savedName = typeof getSavedName === "function" ? getSavedName() : null;
 
-  if(savedName){
+  if (savedName) {
     overlay.classList.add("exit");
     setTimeout(() => overlay.remove(), 300);
     window.dispatchEvent(new Event("username-ready"));
     return;
   }
 
+  // 🔥 bắt đầu chạy log
   typeLog();
 
-  nameForm.addEventListener("submit", e => {
-    e.preventDefault();
+  /* ================= INPUT THẬT ================= */
+  nameInput.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
 
     const name = nameInput.value.trim();
-    if(!name) return;
+    if (!name) return;
 
     localStorage.setItem(NAME_KEY, name);
     localStorage.setItem(TIME_KEY, Date.now());
@@ -129,7 +129,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
-
 
 
 /* =====================================================
@@ -223,9 +222,35 @@ function formatVND(num){
   return Number(num).toLocaleString("vi-VN") + " VND";
 }
 
+  const LUCKY_MEANING = {
+    10000: "🍀 Khởi đầu thuận lợi – đầu năm lấy vía",
+    15000: "🌱 Sinh phúc – năm mới nhiều sinh khí",
+    20000: "🎉 Song hỷ – niềm vui nhân đôi",
+    28000: "📈 Mãi phát – làm ăn lên đều",
+    33000: "💎 Tài – Lộc – Thọ",
+    36000: "🧧 Tài lộc đủ đầy",
+    39000: "⏳ Tài lộc bền lâu",
+    50000: "⚖️ Cân bằng – vững vàng",
+    68000: "🔥 Lộc phát – tiền vô như nước",
+    88000: "🚀 Đại phát – thăng tiến mạnh",
+    99000: "♾️ May mắn lâu dài",
+    100000:"👑 Viên mãn – tròn đầy phúc lộc"
+  };
+
 function randomMoney(){
-  return Math.floor(Math.random() * (100000 - 10000 + 1)) + 10000;
+  const min = 10000;
+  const max = 100000;
+  const step = 1000;
+
+  if(Math.random() < 0.3){
+    const lucky = Object.keys(LUCKY_MEANING);
+    return Number(lucky[Math.floor(Math.random() * lucky.length)]);
+  }
+
+  const count = (max - min) / step + 1;
+  return min + Math.floor(Math.random() * count) * step;
 }
+
 
 /* ================== DIALOG (GLOBAL) ================== */
 let dialog, closeBt, upload, preview, sendBtn;
@@ -289,7 +314,16 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
           if(index === slots.length - 1){
             localStorage.setItem(LIXI_KEY, money);
-            lixiText.innerHTML = `Bạn nhận được <b>${formatVND(money)}</b>`;
+            if(LUCKY_MEANING[money]){
+                lixiText.innerHTML = `
+                  🎉 Bạn nhận được <b>${formatVND(money)}</b><br>
+                  <span style="color:#ffd700;text-shadow:0 0 8px #ff0">
+                    ${LUCKY_MEANING[money]}
+                  </span>
+                `;
+              }else{
+                lixiText.innerHTML = `🎉 Bạn nhận được <b>${formatVND(money)}</b>`;
+              }
             openBtn?.classList.remove("hidden");
             rolling = false;
           }else{
@@ -368,8 +402,9 @@ function submitPopupImage() {
 
   const fileInput = document.getElementById("uploadImg");
   const file = fileInput.files[0];
+  const loading = document.getElementById("uploadLoading");
+  const sendBtn = document.getElementById("sendBtn");
 
-  /* chưa chọn ảnh */
   if (!file) {
     notify("❌ Vui lòng chọn ảnh trước khi gửi!", "error");
     return;
@@ -381,13 +416,17 @@ function submitPopupImage() {
     return;
   }
 
+  /* 🔒 KHÓA UI */
+  loading.classList.remove("hidden");
+  sendBtn.disabled = true;
+
   const reader = new FileReader();
 
   reader.onload = async () => {
     try {
       const formData = new FormData();
       formData.append("name", getUserName());
-      formData.append("email", finalMoney); // số lì xì
+      formData.append("email", finalMoney);
       formData.append("image", reader.result.split(",")[1]);
       formData.append("imageName", file.name);
       formData.append("imageType", file.type);
@@ -402,16 +441,18 @@ function submitPopupImage() {
 
       if (!res.ok) throw new Error("Upload failed");
 
-      /* ✅ THÔNG BÁO THÀNH CÔNG */
       notify("🎉 Gửi ảnh thành công! Lì xì đã được ghi nhận 🧧");
 
-      /* đóng dialog + clear sau 1 chút cho mượt */
       setTimeout(()=>{
         document.getElementById("finalDialog").classList.remove("show");
-      }, 1300);
+        loading.classList.add("hidden");
+        sendBtn.disabled = false;
+      }, 1200);
 
     } catch (err) {
       console.error(err);
+      loading.classList.add("hidden");
+      sendBtn.disabled = false;
       notify("❌ Gửi ảnh thất bại! Vui lòng thử lại", "error");
     }
   };
