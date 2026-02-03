@@ -441,7 +441,7 @@ function submitPopupImage() {
 
       if (!res.ok) throw new Error("Upload failed");
 
-      notify("🎉 Gửi ảnh thành công! Lì xì đã được ghi nhận 🧧");
+      notify("🎉 Gửi ảnh thành công! Cảm ơn mọi người đã chờ 😁");
 
       setTimeout(()=>{
         document.getElementById("finalDialog").classList.remove("show");
