@@ -152,9 +152,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     return [
       `Xin chào ${getUserName()}`,
       "Tiền vô như nước – Lộc tràn",
-      "như xuân 2026",
-      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Maxime impedit illum amet numquam tenetur ducimus, nostrum illo unde eum laboriosam nesciunt ea dolorem odio natus consectetur doloribus. Commodi, cum harum.",
-      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Maxime impedit illum amet numquam tenetur ducimus, nostrum illo unde eum laboriosam nesciunt ea dolorem odio natus consectetur doloribus. Commodi, cum harum."
+      "như xuân 2026"
     ];
   }
 
