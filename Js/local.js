@@ -268,65 +268,118 @@ function closeWishDialog(){
 }
 
 /* ================== MAIN ================== */
-document.addEventListener("DOMContentLoaded", ()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
-/* ---------- LÌ XÌ ---------- */
+ const LUCKY_MEANING = {
+    10000: "🍀 Khởi đầu thuận lợi – đầu năm lấy vía",
+    15000: "🌱 Sinh phúc – năm mới nhiều sinh khí",
+    20000: "🎉 Song hỷ – niềm vui nhân đôi",
+    28000: "📈 Mãi phát – làm ăn lên đều",
+    33000: "💎 Tài – Lộc – Thọ",
+    36000: "🧧 Tài lộc đủ đầy",
+    39000: "⏳ Tài lộc bền lâu",
+    50000: "⚖️ Cân bằng – vững vàng",
+    68000: "🔥 Lộc phát – tiền vô như nước",
+    88000: "🚀 Đại phát – thăng tiến mạnh",
+    99000: "♾️ May mắn lâu dài",
+    100000:"👑 Viên mãn – tròn đầy phúc lộc"
+  };
+
+
+  function randomMoney(){
+    const min = 10000;
+    const max = 100000;
+    const step = 1000;
+
+    if(Math.random() < 0.3){
+      const lucky = Object.keys(LUCKY_MEANING);
+      return Number(lucky[Math.floor(Math.random() * lucky.length)]);
+    }
+
+    const count = (max - min) / step + 1;
+    return min + Math.floor(Math.random() * count) * step;
+  }
+
+
+  function formatVND(num){
+    return Number(num).toLocaleString("vi-VN") + "đ";
+  }
+
+  /* ================== ELEMENT ================== */
   const envelope = document.getElementById("lixiEnvelope");
   const lixiText = document.getElementById("lixiText");
   const slots    = document.querySelectorAll(".slot");
-  const openBtn  = document.getElementById("openDialogBtn");
 
-  if(envelope && slots.length === 6){
+  /* ===== TẠO NÚT "NHẬN MAY MẮN" BẰNG JS ===== */
+  let openBtn = document.getElementById("openDialogBtn");
+
+  if (!openBtn) {
+    openBtn = document.createElement("button");
+    openBtn.id = "openDialogBtn";
+    openBtn.className = "hidden";
+    openBtn.textContent = "Nhận may mắn";
+    envelope.after(openBtn);
+  }
+
+  /* ================== LÌ XÌ ================== */
+  if (envelope && slots.length === 6) {
 
     let rolling = false;
 
+    /* ===== ĐÃ NHẬN TRƯỚC ĐÓ ===== */
     const saved = localStorage.getItem(LIXI_KEY);
-    if(saved){
-      const digits = String(saved).padStart(6,"0").split("");
-      slots.forEach((s,i)=> s.textContent = digits[i]);
+    if (saved) {
+      const digits = String(saved).padStart(6, "0").split("");
+      slots.forEach((s, i) => s.textContent = digits[i]);
+
       lixiText.innerHTML = `🎉 Bạn nhận được <b>${formatVND(saved)}</b>`;
-      openBtn?.classList.remove("hidden");
+
+      envelope.style.display = "none";   // ⬅️ ẨN NÚT LẮC
+      openBtn.classList.remove("hidden");
     }
 
-    envelope.addEventListener("click", ()=>{
-      if(rolling || localStorage.getItem(LIXI_KEY)) return;
-      debugger
+    /* ===== CLICK LẮC ===== */
+    envelope.addEventListener("click", () => {
+      if (rolling || localStorage.getItem(LIXI_KEY)) return;
 
       rolling = true;
       lixiText.textContent = "🎰 Đang quay số lì xì...";
-      openBtn?.classList.add("hidden");
 
       const money  = randomMoney();
-      const digits = String(money).padStart(6,"0").split("");
+      const digits = String(money).padStart(6, "0").split("");
 
-      function rollSlot(index){
+      function rollSlot(index) {
         const slot = slots[index];
         slot.classList.add("active");
 
-        const timer = setInterval(()=>{
+        const timer = setInterval(() => {
           slot.textContent = Math.floor(Math.random() * 10);
         }, 70);
 
-        setTimeout(()=>{
+        setTimeout(() => {
           clearInterval(timer);
           slot.classList.remove("active");
           slot.textContent = digits[index];
 
-          if(index === slots.length - 1){
+          if (index === slots.length - 1) {
             localStorage.setItem(LIXI_KEY, money);
-            if(LUCKY_MEANING[money]){
-                lixiText.innerHTML = `
-                  🎉 Bạn nhận được <b>${formatVND(money)}</b><br>
-                  <span style="color:#ffd700;text-shadow:0 0 8px #ff0">
-                    ${LUCKY_MEANING[money]}
-                  </span>
-                `;
-              }else{
-                lixiText.innerHTML = `🎉 Bạn nhận được <b>${formatVND(money)}</b>`;
-              }
-            openBtn?.classList.remove("hidden");
+
+            if (LUCKY_MEANING[money]) {
+              lixiText.innerHTML = `
+                🎉 Bạn nhận được <b>${formatVND(money)}</b><br>
+                <span style="color:#ffd700;text-shadow:0 0 8px #ff0">
+                  ${LUCKY_MEANING[money]}
+                </span>
+              `;
+            } else {
+              lixiText.innerHTML = `🎉 Bạn nhận được <b>${formatVND(money)}</b>`;
+            }
+
+            envelope.style.display = "none"; // ⬅️ ẨN SAU KHI QUAY XONG
+            openBtn.classList.remove("hidden");
+
             rolling = false;
-          }else{
+          } else {
             rollSlot(index + 1);
           }
         }, 600 + index * 120);
@@ -335,10 +388,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
       rollSlot(0);
     });
 
-    openBtn?.addEventListener("click", openWishDialog);
+    openBtn.addEventListener("click", openWishDialog);
   }
 
-/* ---------- DIALOG TOÀN MÀN ---------- */
+  /* ================== DIALOG TOÀN MÀN ================== */
   const dialog  = document.getElementById("finalDialog");
   const closeBt = document.getElementById("closeFinal");
   const upload  = document.getElementById("uploadImg");
@@ -346,37 +399,32 @@ document.addEventListener("DOMContentLoaded", ()=>{
   const pickBox = document.getElementById("imagePick");
   const sendBtn = document.getElementById("sendBtn");
 
-  if(!dialog || !upload || !preview) return;
+  if (!dialog || !upload || !preview) return;
 
-  /* ===== MỞ / ĐÓNG DIALOG ===== */
-  function openWishDialog(){
+  function openWishDialog() {
     dialog.classList.add("show");
   }
 
-  function closeWishDialog(){
+  function closeWishDialog() {
     dialog.classList.remove("show");
   }
 
   closeBt.onclick = closeWishDialog;
 
-  /* ===== CLICK KHUNG → CHỌN ẢNH ===== */
-  pickBox.onclick = ()=>{
-    upload.click();
-  };
+  pickBox.onclick = () => upload.click();
 
-  /* ===== PREVIEW ẢNH ===== */
-  upload.onchange = ()=>{
+  upload.onchange = () => {
     const file = upload.files[0];
-    if(!file) return;
+    if (!file) return;
 
-    if(!file.type.startsWith("image/")){
+    if (!file.type.startsWith("image/")) {
       alert("Chỉ được chọn ảnh");
       upload.value = "";
       return;
     }
 
     const reader = new FileReader();
-    reader.onload = ()=>{
+    reader.onload = () => {
       preview.src = reader.result;
       preview.style.display = "block";
       pickBox.classList.add("has-img");
@@ -384,15 +432,19 @@ document.addEventListener("DOMContentLoaded", ()=>{
     reader.readAsDataURL(file);
   };
 
-  /* ===== GỬI ===== */
-  sendBtn.onclick = ()=>{
-    if(!upload.files.length){
+  sendBtn.onclick = () => {
+    if (!upload.files.length) {
       alert("Bạn chưa chọn ảnh");
       return;
     }
-    submitPopupImage()
+    submitPopupImage();
   };
+
 });
+
+/* =====================================================
+   HÀM GỬI ẢNH LÌ XÌ
+===================================================== */
 
 function getFinalMoney(){
   return localStorage.getItem(LIXI_KEY) || "0";
@@ -478,3 +530,53 @@ function notify(msg, type = "success", time = 2000){
     n.classList.remove("show");
   }, time);
 }
+
+
+document.addEventListener("DOMContentLoaded", ()=>{
+
+  const el = document.getElementById("happyText");
+
+  const texts = [
+    "Happy New Year",
+    "Chúc Mừng Năm Mới",
+    "新年快乐"
+  ];
+
+  const chars = "!@#$%^&*()_+=-{}[]<>?/\\|~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  let index = 0;
+
+  function virusEffect(newText){
+    let frame = 0;
+    const maxFrame = 18;
+
+    el.classList.add("virus");
+
+    const interval = setInterval(()=>{
+      frame++;
+
+      // tạo chữ loạn như bị hack
+      el.textContent = newText
+        .split("")
+        .map((c,i)=>{
+          if(frame < maxFrame - i){
+            return chars[Math.floor(Math.random() * chars.length)];
+          }
+          return c;
+        })
+        .join("");
+
+      if(frame >= maxFrame){
+        clearInterval(interval);
+        el.textContent = newText;
+        el.classList.remove("virus");
+      }
+    }, 40);
+  }
+
+  setInterval(()=>{
+    index = (index + 1) % texts.length;
+    virusEffect(texts[index]);
+  }, 2200);
+
+});
