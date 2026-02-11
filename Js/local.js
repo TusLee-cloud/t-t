@@ -285,21 +285,32 @@ document.addEventListener("DOMContentLoaded", () => {
     100000:"👑 Viên mãn – tròn đầy phúc lộc"
   };
 
-
   function randomMoney(){
-    const min = 10000;
-    const max = 100000;
-    const step = 1000;
 
-    if(Math.random() < 0.3){
-      const lucky = Object.keys(LUCKY_MEANING);
-      return Number(lucky[Math.floor(Math.random() * lucky.length)]);
+    const roll = Math.random();
+
+    let min, max;
+
+    if(roll < 0.1){
+      // 30% → 200k–250k
+      min = 200000;
+      max = 250000;
+
+    }else if(roll < 0.4){
+      // 40% → 100k–199k
+      min = 100000;
+      max = 199999;
+
+    }else{
+      // 30% → 50k–99k
+      min = 50000;
+      max = 99999;
     }
 
-    const count = (max - min) / step + 1;
-    return min + Math.floor(Math.random() * count) * step;
-  }
+    const money = Math.floor(Math.random() * (max - min + 1)) + min;
 
+    return String(money).padStart(6, "0");
+  }
 
   function formatVND(num){
     return Number(num).toLocaleString("vi-VN") + "đ";

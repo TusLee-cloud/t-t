@@ -14,7 +14,6 @@ let started = false;
 const ICON_PLAY  = "M8 5v14l11-7z";
 const ICON_PAUSE = "M6 4h4v16H6zm8 0h4v16h-4z";
 
-/* mặc định */
 iconPath.setAttribute("d", ICON_PLAY);
 
 /* ===== TẠO WAVE ===== */
@@ -91,7 +90,7 @@ audio.addEventListener("pause", () => {
   pp.classList.remove("playing");
 });
 
-/* ===== CLICK WAVE → SEEK (+ PLAY NẾU PAUSE) ===== */
+/* ===== CLICK WAVE → SEEK ===== */
 waveWrap.addEventListener("click", e => {
   e.stopPropagation();
 
@@ -103,3 +102,29 @@ waveWrap.addEventListener("click", e => {
   }
 });
 
+/* ===== HẾT NHẠC → CHỜ 2s → PHÁT LẠI ===== */
+audio.addEventListener("ended", () => {
+  if(!started) return;
+
+  setTimeout(() => {
+    audio.currentTime = 0;
+    audio.play();
+  }, 2000);
+});
+
+/* ===== SANG TAB KHÁC → PAUSE / QUAY LẠI → PLAY TIẾP ===== */
+document.addEventListener("visibilitychange", async () => {
+  if (document.hidden) {
+    if (!audio.paused) {
+      audio.pause();
+    }
+  } else {
+    if (started && audio.paused && audio.currentTime > 0) {
+      try {
+        await audio.play();
+      } catch (e) {
+        console.warn("Autoplay blocked");
+      }
+    }
+  }
+});

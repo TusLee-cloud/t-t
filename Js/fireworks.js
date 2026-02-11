@@ -1,6 +1,6 @@
 /* ===============================
    FIREWORKS – TẾT COUNTDOWN PRO
-   Rơi rất chậm – lơ lửng – sparkle
+   Bắn chậm – ít – sang
 ================================ */
 
 const container = document.querySelector(".right");
@@ -17,7 +17,7 @@ resize();
 
 /* ================= CONFIG ================= */
 const GRAVITY = 0.045;
-const AIR = 0.998; // GIỮ HẠT LÂU HƠN
+const AIR = 0.998;
 
 const COLORS = [
   ["#ffcc00", "#ff8800"],
@@ -34,14 +34,14 @@ class Rocket{
     this.y = canvas.height + 10;
 
     if(type === "big"){
-      this.targetY = canvas.height * (0.15 + Math.random() * 0.08);
-      this.speed = 9 + Math.random() * 2;
+      this.targetY = canvas.height * (0.18 + Math.random() * 0.08);
+      this.speed = 8 + Math.random() * 1.5;
     }else{
-      this.targetY = canvas.height * (0.35 + Math.random() * 0.3);
-      this.speed = 7 + Math.random() * 2;
+      this.targetY = canvas.height * (0.45 + Math.random() * 0.25);
+      this.speed = 6.5 + Math.random() * 1.5;
     }
 
-    const angle = (-Math.PI/2) + (Math.random()-0.5)*1.2;
+    const angle = (-Math.PI/2) + (Math.random()-0.5)*0.9;
     this.vx = Math.cos(angle) * this.speed;
     this.vy = Math.sin(angle) * this.speed;
 
@@ -51,7 +51,7 @@ class Rocket{
 
   update(){
     this.trail.push({x:this.x, y:this.y});
-    if(this.trail.length > (this.type==="big"?20:14)) this.trail.shift();
+    if(this.trail.length > (this.type==="big"?22:16)) this.trail.shift();
 
     this.x += this.vx;
     this.y += this.vy;
@@ -68,7 +68,7 @@ class Rocket{
     /* đuôi pháo */
     ctx.beginPath();
     this.trail.forEach((p,i)=>{
-      ctx.strokeStyle = `rgba(255,255,255,${i/this.trail.length*0.45})`;
+      ctx.strokeStyle = `rgba(255,255,255,${i/this.trail.length*0.4})`;
       if(i===0) ctx.moveTo(p.x,p.y);
       else ctx.lineTo(p.x,p.y);
     });
@@ -76,7 +76,7 @@ class Rocket{
 
     /* đầu pháo */
     ctx.beginPath();
-    ctx.arc(this.x,this.y,this.type==="big"?2.8:2.2,0,Math.PI*2);
+    ctx.arc(this.x,this.y,this.type==="big"?2.6:2.1,0,Math.PI*2);
     ctx.fillStyle="#fff";
     ctx.fill();
   }
@@ -87,8 +87,8 @@ class Particle{
   constructor(x,y,color,isBig){
     const angle = Math.random()*Math.PI*2;
     const speed = isBig
-      ? Math.random()*3 + 1.8
-      : Math.random()*2 + 1;
+      ? Math.random()*2.6 + 1.4
+      : Math.random()*1.8 + 0.9;
 
     this.x=x; this.y=y;
     this.vx=Math.cos(angle)*speed;
@@ -96,16 +96,15 @@ class Particle{
 
     this.alpha=1;
     this.color=color;
-    this.size=isBig?2.4:1.9;
+    this.size=isBig?2.2:1.7;
 
-    this.spark = Math.random() > 0.65;
+    this.spark = Math.random() > 0.7;
     this.twinkle = Math.random()*Math.PI*2;
   }
 
   update(){
-    /* RƠI CHẬM */
-    this.vy += GRAVITY * 0.4;
-    this.vx += (Math.random()-0.5)*0.015;
+    this.vy += GRAVITY * 0.35;
+    this.vx += (Math.random()-0.5)*0.012;
 
     this.vx *= AIR;
     this.vy *= AIR;
@@ -113,8 +112,8 @@ class Particle{
     this.x += this.vx;
     this.y += this.vy;
 
-    this.alpha -= this.spark ? 0.006 : 0.004;
-    this.twinkle += 0.18;
+    this.alpha -= this.spark ? 0.005 : 0.0038;
+    this.twinkle += 0.16;
 
     return this.alpha > 0;
   }
@@ -146,7 +145,7 @@ const particles=[];
 /* ================= EXPLODE ================= */
 function explode(x,y,colors,type){
   const isBig = type==="big";
-  const count = isBig ? 110 : 55;
+  const count = isBig ? 80 : 38;
 
   for(let i=0;i<count;i++){
     const c = colors[Math.floor(Math.random()*colors.length)];
@@ -158,15 +157,14 @@ function explode(x,y,colors,type){
 function launchSmall(){ rockets.push(new Rocket("small")); }
 function launchBig(){ rockets.push(new Rocket("big")); }
 
-/* ================= COUNTDOWN MODE 😈 ================= */
+/* ================= MODE BẮN CHẬM ================= */
 setInterval(()=>{
-  for(let i=0;i<4;i++){
-    setTimeout(launchSmall,i*120);
-  }
-  setTimeout(launchBig,700);
-},1300);
+  launchSmall();          // 1 pháo nhỏ
+  setTimeout(launchBig, 800); // 1 pháo lớn sau đó
+}, 2200);                 // chu kỳ chậm hơn
 
-container.addEventListener("click",launchBig);
+/* click bắn thêm */
+container.addEventListener("click", launchBig);
 
 /* ================= ANIMATE ================= */
 function animate(){
