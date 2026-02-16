@@ -852,3 +852,37 @@ button:hover{
   80%  { transform: translate(1px,-2px); }
   100% { transform: translate(0,0); }
 }
+
+.note{
+    position: fixed;
+    bottom: 1em;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 85%;
+    max-width: 320px;
+
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+
+    color: #ffd76a;
+
+    padding: 8px 14px;
+    border-radius: 18px;
+
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+
+    word-wrap: break-word;
+}
+
+
+@media (max-width: 480px){
+    .note{
+        bottom: 15em;
+        font-size: 11px;
+        max-width: 90%;
+        padding: 7px 12px;
+    }
+}
