@@ -297,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
       min = 200000;
       max = 250000;
 
-    }else if(roll < 0.2){
+    }else if(roll < 0.3){
       // 40% → 100k–199k
       min = 100000;
       max = 199999;
