@@ -147,13 +147,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
   lixiBox.classList.remove("lixi-show");
 
-  function getWishLines(){
-    return [
-      `Xin chào ${getUserName()}`,
-      "Tiền vô như nước – Lộc tràn",
-      "như xuân 2026"
-    ];
-  }
+function getWishLines(){
+  return [
+    `Xuân về gõ cửa ${getUserName()} ơi,`,
+    "Tiền tài rủng rỉnh – nụ cười trên môi.",
+    "An khang phú quý đầy vơi,",
+    "Một năm 2026 rạng ngời bình an."
+  ];
+}
 
   function typeLines(lines){
     wishText.innerHTML = "";
@@ -291,12 +292,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let min, max;
 
-    if(roll < 0.1){
+    if(roll < 0.01){
       // 30% → 200k–250k
       min = 200000;
       max = 250000;
 
-    }else if(roll < 0.4){
+    }else if(roll < 0.2){
       // 40% → 100k–199k
       min = 100000;
       max = 199999;
